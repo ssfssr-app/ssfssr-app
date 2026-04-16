@@ -542,7 +542,7 @@ function switchToTerms() {
 }
 
 function setLang(page, lang, btn) {
-  document.querySelectorAll(`#panel-${page} .lang-content`).forEach(el => el.classList.remove('active'));
+ document.querySelectorAll('#panel-' + page + ' .lang-content').forEach(function(el) { el.classList.remove('active'); });
   document.querySelectorAll(`#panel-${page} .lang-btn`).forEach(b => b.classList.remove('active'));
   document.getElementById(`${page}-${lang}`).classList.add('active');
   btn.classList.add('active');
