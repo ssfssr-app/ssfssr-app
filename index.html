@@ -1,3 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSFSSR Web Calculator — Supply Side Food Self-Sufficiency Ratio Database</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #2c3e50; min-height: 100vh; }
+header { background: #1a3557; color: white; padding: 22px 40px 0; }
+.header-top { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+header h1 { font-size: 20px; font-weight: 700; }
+header .sub { font-size: 13px; opacity: 0.75; padding-bottom: 4px; }
+nav { background: #1a3557; padding: 0 40px; display: flex; gap: 2px; flex-wrap: wrap; }
+nav button { background: none; border: none; color: rgba(255,255,255,0.6); padding: 11px 22px; font-size: 14px; font-weight: 500; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+nav button.active, nav button:hover { color: white; border-bottom-color: #5dade2; }
+.page-indicator { font-size: 11px; opacity: 0.5; margin-left: 6px; }
+main { max-width: 900px; margin: 32px auto; padding: 0 20px 60px; }
+.panel { display: none; }
+.panel.active { display: block; }
+.card { background: white; border-radius: 10px; padding: 28px 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 24px; }
+.card-title { font-size: 14px; font-weight: 700; color: #1a3557; border-bottom: 2px solid #e8edf3; padding-bottom: 12px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+.hero { background: #1a3557; color: white; border-radius: 10px; padding: 32px 36px; margin-bottom: 24px; }
+.hero h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.hero .hero-sub { font-size: 14px; opacity: 0.85; margin-bottom: 18px; line-height: 1.6; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 500; }
+.hero-note { font-size: 12px; opacity: 0.7; line-height: 1.8; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 14px; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 20px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 11px; font-weight: 700; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.6px; }
+select { padding: 9px 14px; border: 1.5px solid #dde2e8; border-radius: 6px; font-size: 14px; color: #2c3e50; background: white; min-width: 200px; cursor: pointer; }
+select:focus { outline: none; border-color: #5dade2; }
+.btn { padding: 9px 22px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.btn-primary { background: #2980b9; color: white; }
+.btn-primary:hover { background: #2471a3; }
+.btn-secondary { background: #ecf0f1; color: #2c3e50; }
+.btn-secondary:hover { background: #dce1e7; }
+.status { padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
+.status.ok   { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+.status.err  { background: #fdedec; color: #922b21; border: 1px solid #f1948a; }
+.status.info { background: #eaf4fb; color: #1a5276; border: 1px solid #aed6f1; }
+#result { min-height: 60px; padding: 20px; background: #f8fafc; border-radius: 8px; border: 1.5px solid #dde2e8; font-size: 15px; line-height: 1.6; }
+.result-value { font-size: 38px; font-weight: 700; color: #c0392b; margin: 6px 0; }
+.result-country { font-size: 20px; font-weight: 600; color: #1a3557; }
+.result-meta { font-size: 13px; color: #7f8c8d; margin-top: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { background: #1a3557; color: white; padding: 10px 14px; text-align: left; font-weight: 600; }
+td { padding: 9px 14px; border-bottom: 1px solid #eef0f3; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td { background: #eaf4fb; }
+.prose { font-size: 14px; line-height: 1.85; color: #2c3e50; }
+.prose p { margin-bottom: 12px; }
+.prose h3 { font-size: 14px; font-weight: 700; color: #1a3557; margin: 20px 0 8px; }
+.prose ul, .prose ol { padding-left: 22px; margin-bottom: 12px; }
+.prose li { margin-bottom: 7px; }
+.prose a { color: #2980b9; }
+.prose a:hover { text-decoration: underline; }
+.highlight { background: #fef9f0; border-left: 3px solid #f0a500; padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 14px 0; font-size: 13px; }
+.lang-tabs { display: flex; gap: 6px; margin-bottom: 20px; }
+.lang-btn { padding: 5px 18px; border: 1.5px solid #dde2e8; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; background: white; color: #7f8c8d; transition: all 0.2s; }
+.lang-btn.active { background: #1a3557; color: white; border-color: #1a3557; }
+.lang-content { display: none; }
+.lang-content.active { display: block; }
+.citation-box { background: #f4f6f9; border: 1.5px solid #dde2e8; border-radius: 8px; padding: 16px 18px; font-size: 13px; line-height: 1.8; margin: 12px 0; }
+pre { font-size: 12px; line-height: 1.7; overflow-x: auto; white-space: pre-wrap; word-break: break-all; font-family: 'Courier New', monospace; background: #2c3e50; color: #ecf0f1; padding: 14px 16px; border-radius: 6px; margin: 8px 0; }
+.year-table { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: 8px; margin: 12px 0; }
+.year-row { background: #f8fafc; border: 1px solid #eef0f3; border-radius: 6px; padding: 7px 12px; font-size: 13px; display: flex; justify-content: space-between; }
+.year-row .yr { font-weight: 600; color: #1a3557; }
+.form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 18px; }
+.form-group label { font-size: 11px; font-weight: 700; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.6px; }
+.form-group input, .form-group select, .form-group textarea { padding: 10px 14px; border: 1.5px solid #dde2e8; border-radius: 6px; font-size: 14px; font-family: inherit; color: #2c3e50; transition: border-color 0.2s; width: 100%; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #5dade2; }
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 540px) { .form-row { grid-template-columns: 1fr; } }
+.required { color: #e74c3c; }
+#form-feedback { margin-top: 14px; }
+.btn-link { background: none; border: none; color: #2980b9; cursor: pointer; font-size: 14px; text-decoration: underline; padding: 0; }
+.url-ph { color: #e67e22; font-weight: 600; }
+footer { text-align: center; font-size: 12px; color: #aab3bb; padding: 20px; border-top: 1px solid #e8edf3; }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-top">
+    <h1>SSFSSR Web Calculator</h1>
+    <span class="sub">Supply Side Food Self-Sufficiency Ratio Database (2010-2023)</span>
+  </div>
+</header>
+<nav>
+  <button class="active" onclick="showPanel('top',this)">Top <span class="page-indicator">Page 1</span></button>
+  <button onclick="showPanel('about',this)">About SSFSSR <span class="page-indicator">Page 2</span></button>
+  <button onclick="showPanel('terms',this)">Terms and Contact <span class="page-indicator">Page 3</span></button>
+</nav>
+<main>
+<div id="panel-top" class="panel active">
+  <div class="hero">
+    <h2>SSFSSR Web Calculator</h2>
+    <p class="hero-sub">Supply Side Food Self-Sufficiency Ratio Database (2010-2023)<br>
+    Supply Side Food Self-Sufficiency Ratio Database (2010-2023)</p>
+    <div class="hero-badges">
+      <span class="badge">188 Countries</span>
+      <span class="badge">2010-2023</span>
+      <span class="badge">Based on 10-PCFSSR</span>
+      <span class="badge">World's First Unified Calculation</span>
+    </div>
+    <p class="hero-note">
+      This public application provides country-level SSFSSR results for 2010-2023, developed in accordance with the 10 Principles for Calculating Food Self-Sufficiency Ratios (10-PCFSSR).
+      To the best of the knowledge of the Development Research Group, this is the world's first public application designed to calculate and present national food self-sufficiency ratios in a unified manner under common conditions.
+      Provided for academic research, policy research, and other non-commercial purposes. All values are expressed as percentages (%). Blank indicates data not available.
+      Copyright 2026 Goro Takahashi / SSFSSR Development Research Group
+    </p>
+  </div>
+  <div class="card">
+    <div class="card-title">Data Search - Country SSFSSR by Year</div>
+    <div id="load-status" class="status info">Loading data from Google Sheets...</div>
+    <div class="controls">
+      <div class="field">
+        <label>Country</label>
+        <select id="country-sel"><option value="">Loading...</option></select>
+      </div>
+      <div class="field">
+        <label>Year</label>
+        <select id="year-sel"></select>
+      </div>
+      <button class="btn btn-primary" onclick="lookup()">Search</button>
+      <button class="btn btn-secondary" onclick="showAll()">All Years</button>
+    </div>
+    <div id="result"><span style="color:#aab3bb">Select a country and year, then click Search.</span></div>
+  </div>
+  <div class="card" style="padding:16px 32px;">
+    <p class="prose" style="font-size:13px;">
+      For inquiries: <button class="btn-link" onclick="switchToTerms()">Contact / Inquiry Form (Page 3)</button>
+    </p>
+  </div>
+</div>
+<div id="panel-about" class="panel">
+  <div class="lang-tabs">
+    <button class="lang-btn active" onclick="setLang('about','en',this)">English</button>
+    <button class="lang-btn" onclick="setLang('about','ja',this)">日本語</button>
+  </div>
+  <div id="about-en" class="lang-content active">
+    <div class="card">
+      <div class="card-title">About SSFSSR</div>
+      <div class="prose">
+        <p>SSFSSR is an indicator developed to measure the extent to which each country can meet its domestic food supply through its own food production. This database was developed in accordance with the <strong>10 Principles for Calculating Food Self-Sufficiency Ratios (10-PCFSSR)</strong>.</p>
+        <p>To the best of the knowledge of the Development Research Group, this is the world's first public application designed to calculate and present national food self-sufficiency ratios in a unified manner under common conditions.</p>
+        <h3>Main Data Sources</h3>
+        <ul>
+          <li>FAO FAOSTAT, Food Balances (2010-)</li>
+          <li>Where necessary: World Bank Open Data, USDA open data, and national government statistics</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">The 10 Principles for Calculating Food Self-Sufficiency Ratios (10-PCFSSR)</div>
+      <div class="prose">
+        <ol>
+          <li><strong>A sufficient number of food items and an appropriate balance among them must be ensured.</strong></li>
+          <li><strong>Primary and secondary products must both be appropriately represented, and their differences must be reflected in the calculation.</strong></li>
+          <li><strong>In principle, the same dataset must be used for calculating food self-sufficiency ratios across countries.</strong></li>
+          <li><strong>All data used in the calculation must be publicly available free of charge and be reliable.</strong></li>
+          <li><strong>The data sources used in the calculation should be concentrated in one place.</strong></li>
+          <li><strong>Continuity in the data used must be ensured.</strong></li>
+          <li><strong>If estimates are included, the reasons for and methods of estimation must be clearly stated.</strong></li>
+          <li><strong>The calculated results must be reproducible.</strong></li>
+          <li><strong>The method must be applicable under common conditions across countries.</strong></li>
+          <li><strong>The formula must be clear and publicly disclosed.</strong></li>
+        </ol>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Calculation Method and References</div>
+      <div class="prose">
+        <ul>
+          <li>Goro Takahashi, <em>A New Method for Calculating the Food Self-Sufficiency Ratio: Supply-Side Food Self-Sufficiency Ratio</em><br>
+          Springer Nature: https://link.springer.com/article/10.1186/s40066-025-00570-z (65-commodity basis)</li>
+          <li><em>SSFSSR Version 1.1 - Formal Specification, PPCR Structural Coefficients, 64-Commodity Framework, and 2023 Global Dataset</em><br>
+          Zenodo: https://doi.org/10.5281/zenodo.18889852 (64-commodity basis)</li>
+        </ul>
+        <p>In this database, 64 commodities are classified into primary and secondary products. All are converted into a primary-product basis in caloric terms using PPCR (Primary Product Conversion Rate).</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Number of Reporting Units by Year</div>
+      <p class="prose" style="margin-bottom:12px;">The world average is included as a reference value, so the actual number of countries is one less than shown.</p>
+      <div class="year-table">
+        <div class="year-row"><span class="yr">2010</span><span>181</span></div>
+        <div class="year-row"><span class="yr">2011</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2012</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2013</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2014</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2015</span><span>178</span></div>
+        <div class="year-row"><span class="yr">2016</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2017</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2018</span><span>178</span></div>
+        <div class="year-row"><span class="yr">2019</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2020</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2021</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2022</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2023</span><span>175</span></div>
+      </div>
+      <p class="prose" style="margin-top:12px;"><strong>Unit:</strong> Percentage (%)</p>
+    </div>
+  </div>
+  <div id="about-ja" class="lang-content">
+    <div class="card">
+      <div class="card-title">SSFSSRについて</div>
+      <div class="prose">
+        <p>SSFSSRは、各国が自国の食料生産によって国内食料供給をどの程度満たすことができるかを測定するために開発された指標です。</p>
+        <h3>主なデータソース</h3>
+        <ul>
+          <li>FAO FAOSTAT, Food Balances (2010-)</li>
+          <li>必要に応じて、世界銀行、USDA、各国政府統計</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">国別食料自給率計算の10原則（10-PCFSSR）</div>
+      <div class="prose">
+        <ol>
+          <li>十分な品目数と品目間のバランスが確保されていること</li>
+          <li>一次産品と二次産品の差異が計算に反映されていること</li>
+          <li>各国比較に原則として同一データセットを用いること</li>
+          <li>使用データが無料公開され、信頼できること</li>
+          <li>データ源ができる限り一元化されていること</li>
+          <li>使用データに継続性があること</li>
+          <li>推計を含む場合、その理由と方法が明示されていること</li>
+          <li>計算結果に再現性があること</li>
+          <li>各国を同一条件で比較できる方法であること</li>
+          <li>計算式が明瞭で公開されていること</li>
+        </ol>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">各年の計算対象数</div>
+      <div class="year-table">
+        <div class="year-row"><span class="yr">2010年</span><span>181</span></div>
+        <div class="year-row"><span class="yr">2011年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2012年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2013年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2014年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2015年</span><span>178</span></div>
+        <div class="year-row"><span class="yr">2016年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2017年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2018年</span><span>178</span></div>
+        <div class="year-row"><span class="yr">2019年</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2020年</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2021年</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2022年</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2023年</span><span>175</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="panel-terms" class="panel">
+  <div class="lang-tabs">
+    <button class="lang-btn active" onclick="setLang('terms','en',this)">English</button>
+    <button class="lang-btn" onclick="setLang('terms','ja',this)">日本語</button>
+  </div>
+  <div id="terms-en" class="lang-content active">
+    <div class="card">
+      <div class="card-title">Terms of Use and Disclaimer</div>
+      <div class="prose">
+        <ol>
+          <li>The data are calculated values for research reference only and should not be used as the sole basis for commercial or policy decisions without independent verification.</li>
+          <li>The developer makes no warranties regarding accuracy, completeness, or timeliness. The developer shall not be held liable for any errors or consequences arising from use.</li>
+          <li>Users are responsible for compliance with applicable laws in their jurisdictions.</li>
+          <li>This database may be updated, revised, or discontinued without prior notice.</li>
+          <li>When using this database, users must provide proper attribution in accordance with the prescribed citation format.</li>
+          <li>Commercial use, redistribution, or large-scale reproduction requires prior written permission.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">How to Cite</div>
+      <div class="prose">
+        <div class="citation-box">
+          <strong>Standard citation:</strong><br>
+          Takahashi, G. (2026). Supply Side Food Self-Sufficiency Ratio (SSFSSR) Database, 2010-2023. SSFSSR Development Research Group. <span class="url-ph">[Public URL - to be added before publication]</span>
+        </div>
+        <div class="citation-box">
+          <strong>BibTeX:</strong>
+<pre>@misc{takahashi_ssfssr_database_2026,
+  author    = {Goro Takahashi},
+  title     = {Supply Side Food Self-Sufficiency Ratio
+               (SSFSSR) Database, 2010--2023},
+  year      = {2026},
+  publisher = {SSFSSR Development Research Group},
+  howpublished = {\url{[Public URL]}}
+}</pre>
+        </div>
+        <p class="highlight">Before publication, replace [Public URL] with: https://ssfssr-app.github.io/ssfssr-app/</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Copyright and Permitted Use</div>
+      <div class="prose">
+        <p>Copyright 2026 Goro Takahashi / SSFSSR Development Research Group. All rights reserved.</p>
+        <h3>Permitted Uses</h3>
+        <ul>
+          <li>Non-commercial academic research and education, including NGO activities</li>
+          <li>Policy analysis and governmental research</li>
+          <li>Reproduction of limited extracts with proper citation</li>
+        </ul>
+        <h3>Restricted Uses</h3>
+        <ul>
+          <li>Commercial redistribution or resale</li>
+          <li>Incorporation into another database without permission</li>
+          <li>Use without attribution</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Contact / Inquiry Form</div>
+      <div class="prose" style="margin-bottom:18px;">
+        <p>We welcome inquiries regarding methodology, citation, and permissions. Replies will be provided when necessary.</p>
+      </div>
+      <div id="form-feedback"></div>
+      <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <input type="hidden" name="_subject" value="SSFSSR Database Inquiry">
+        <input type="text" name="_gotcha" style="display:none">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Name <span class="required">*</span></label>
+            <input type="text" name="name" placeholder="Dr. Jane Smith" required>
+          </div>
+          <div class="form-group">
+            <label>Email <span class="required">*</span></label>
+            <input type="email" name="email" placeholder="jane@university.edu" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Affiliation</label>
+            <input type="text" name="affiliation" placeholder="University of Tokyo">
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <input type="text" name="country" placeholder="Japan">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Inquiry Type <span class="required">*</span></label>
+          <select name="inquiry_type" required>
+            <option value="">Please select</option>
+            <option value="methodology">Methodology / Calculation Method</option>
+            <option value="data_access">Data Access / Full Dataset Request</option>
+            <option value="collaboration">Research Collaboration</option>
+            <option value="citation">Citation / Publication Use</option>
+            <option value="permission">Permission for Commercial Use</option>
+            <option value="discrepancy">Data Discrepancy / Error Report</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message <span class="required">*</span></label>
+          <textarea name="message" placeholder="Please describe your inquiry in detail." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;padding:13px;">Send Inquiry</button>
+      </form>
+      <p style="font-size:13px;color:#7f8c8d;margin-top:18px;">
+        Email: <span class="url-ph">[contact@example.com - replace before publication]</span>
+      </p>
+    </div>
+  </div>
+  <div id="terms-ja" class="lang-content">
+    <div class="card">
+      <div class="card-title">利用条件および免責事項</div>
+      <div class="prose">
+        <ol>
+          <li>本データベースの数値は研究参考用です。独立した検証なしに意思決定の唯一の根拠として用いるべきではありません。</li>
+          <li>開発者はデータの正確性について保証しません。利用によって生じた損失について責任を負いません。</li>
+          <li>利用者は適用される法令に適合するよう本データベースを利用する責任を負います。</li>
+          <li>本データベースは予告なく更新または公開中止されることがあります。</li>
+          <li>利用する場合は所定の形式で出典を明示してください。</li>
+          <li>商業利用、再配布、大規模な転載には事前の書面による許可が必要です。</li>
+        </ol>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">引用方法</div>
+      <div class="prose">
+        <div class="citation-box">
+          Takahashi, G. (2026). Supply Side Food Self-Sufficiency Ratio (SSFSSR) Database, 2010-2023. SSFSSR Development Research Group. <span class="url-ph">[公開URL]</span>
+        </div>
+        <p class="highlight">公開前に [公開URL] を https://ssfssr-app.github.io/ssfssr-app/ に置き換えてください。</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">著作権および利用許諾</div>
+      <div class="prose">
+        <p>Copyright 2026 Goro Takahashi / SSFSSR Development Research Group. All rights reserved.</p>
+        <h3>許可される利用</h3>
+        <ul>
+          <li>非商業的な学術研究および教育、NGO活動</li>
+          <li>政策分析および政府研究</li>
+          <li>適切な引用を付した限定的な抜粋の転載</li>
+        </ul>
+        <h3>制限される利用</h3>
+        <ul>
+          <li>データの商業的再配布または再販売</li>
+          <li>許可なく独自のデータベースへ組み込むこと</li>
+          <li>出典を明示しない利用</li>
+        </ul>
+        <p>お問い合わせはEnglishタブのフォームをご利用ください（日本語可）。</p>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+<footer>
+  SSFSSR Web Calculator - Supply Side Food Self-Sufficiency Ratio Database (2010-2023)<br>
+  Copyright 2026 Goro Takahashi / SSFSSR Development Research Group
+</footer>
 <script>
 var CSV_URL = 'https://docs.google.com/spreadsheets/d/1LpbwXSAHfY9QGtzK25B5nGhMf6eTpZDjE3mn3ZG3ELE/export?format=csv&gid=249714700';
 var data = [];
@@ -63,7 +480,7 @@ async function loadData() {
     }
     countries.sort();
     var cSel = document.getElementById('country-sel');
-    var cHtml = '<option value="">— Select Country —</option>';
+    var cHtml = '<option value="">-- Select Country --</option>';
     for (var k = 0; k < countries.length; k++) {
       cHtml += '<option value="' + countries[k] + '">' + countries[k] + '</option>';
     }
@@ -85,10 +502,10 @@ async function loadData() {
     ySel.innerHTML = yHtml;
     ySel.value = years[years.length - 1];
     document.getElementById('load-status').className = 'status ok';
-    document.getElementById('load-status').innerHTML = '✅ Data loaded: ' + data.length + ' records · ' + countries.length + ' countries · ' + years[0] + '–' + years[years.length - 1];
+    document.getElementById('load-status').innerHTML = 'Data loaded: ' + data.length + ' records, ' + countries.length + ' countries, ' + years[0] + '-' + years[years.length - 1];
   } catch (e) {
     document.getElementById('load-status').className = 'status err';
-    document.getElementById('load-status').innerHTML = '⚠ Failed to load data. Make sure the Google Sheets URL is set correctly and the sheet is published to the web (File → Share → Publish to web → CSV format).';
+    document.getElementById('load-status').innerHTML = 'Failed to load data. Please check the Google Sheets URL.';
     console.error(e);
   }
 }
@@ -102,9 +519,9 @@ function lookup() {
     if (data[i].country === country && data[i].year === year) { row = data[i]; break; }
   }
   if (row) {
-    setResult('<div class="result-country">' + row.country + ' <span style="font-size:14px;color:#7f8c8d">(' + row.iso3 + ')</span></div><div class="result-value">' + row.value + '%</div><div class="result-meta">Supply Side Food Self-Sufficiency Ratio (SSFSSR) · ' + row.year + '</div>');
+    setResult('<div class="result-country">' + row.country + ' (' + row.iso3 + ')</div><div class="result-value">' + row.value + '%</div><div class="result-meta">SSFSSR ' + row.year + '</div>');
   } else {
-    setResult('<span style="color:#aab3bb">No data found for the selected combination.</span>');
+    setResult('<span style="color:#aab3bb">No data found.</span>');
   }
 }
 
@@ -122,14 +539,14 @@ function showAll() {
     if (rows[j].value < min) min = rows[j].value;
     if (rows[j].value > max) max = rows[j].value;
   }
-  var html = '<div class="result-country" style="margin-bottom:12px">' + rows[0].country + ' <span style="font-size:14px;color:#7f8c8d">(' + rows[0].iso3 + ')</span></div><table><tr><th>Year</th><th>SSFSSR (%)</th></tr>';
+  var html = '<div class="result-country" style="margin-bottom:12px">' + rows[0].country + ' (' + rows[0].iso3 + ')</div><table><tr><th>Year</th><th>SSFSSR (%)</th></tr>';
   for (var k = 0; k < rows.length; k++) {
     var style = '';
     if (rows[k].value === max) style = 'color:#c0392b;font-weight:700';
     else if (rows[k].value === min) style = 'color:#27ae60;font-weight:700';
-    html += '<tr><td>' + rows[k].year + '</td><td style="' + style + '">' + (isNaN(rows[k].value) ? '—' : rows[k].value + '%') + '</td></tr>';
+    html += '<tr><td>' + rows[k].year + '</td><td style="' + style + '">' + (isNaN(rows[k].value) ? '-' : rows[k].value + '%') + '</td></tr>';
   }
-  html += '</table><p style="font-size:12px;color:#7f8c8d;margin-top:10px">Min: ' + min + '% | Max: ' + max + '% | Change: ' + (rows[rows.length-1].value - rows[0].value).toFixed(1) + 'pp (' + rows[0].year + '→' + rows[rows.length-1].year + ')</p>';
+  html += '</table><p style="font-size:12px;color:#7f8c8d;margin-top:10px">Min: ' + min + '% | Max: ' + max + '% | Change: ' + (rows[rows.length-1].value - rows[0].value).toFixed(1) + 'pp (' + rows[0].year + ' to ' + rows[rows.length-1].year + ')</p>';
   setResult(html);
 }
 
@@ -139,7 +556,7 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   e.preventDefault();
   var fb = document.getElementById('form-feedback');
   var btn = this.querySelector('button[type="submit"]');
-  btn.disabled = true; btn.textContent = 'Sending…';
+  btn.disabled = true; btn.textContent = 'Sending...';
   try {
     var res = await fetch(this.action, { method: 'POST', body: new FormData(this), headers: { 'Accept': 'application/json' } });
     if (res.ok) {
