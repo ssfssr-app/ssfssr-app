@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSFSSR Web Calculator — Supply Side Food Self-Sufficiency Ratio Database</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #2c3e50; min-height: 100vh; }
+header { background: #1a3557; color: white; padding: 22px 40px 0; }
+.header-top { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+header h1 { font-size: 20px; font-weight: 700; }
+header .sub { font-size: 13px; opacity: 0.75; padding-bottom: 4px; }
+nav { background: #1a3557; padding: 0 40px; display: flex; gap: 2px; flex-wrap: wrap; }
+nav button { background: none; border: none; color: rgba(255,255,255,0.6); padding: 11px 22px; font-size: 14px; font-weight: 500; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+nav button.active, nav button:hover { color: white; border-bottom-color: #5dade2; }
+.page-indicator { font-size: 11px; opacity: 0.5; margin-left: 6px; }
+main { max-width: 900px; margin: 32px auto; padding: 0 20px 60px; }
+.panel { display: none; }
+.panel.active { display: block; }
+.card { background: white; border-radius: 10px; padding: 28px 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 24px; }
+.card-title { font-size: 14px; font-weight: 700; color: #1a3557; border-bottom: 2px solid #e8edf3; padding-bottom: 12px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+.hero { background: #1a3557; color: white; border-radius: 10px; padding: 32px 36px; margin-bottom: 24px; }
+.hero h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.hero .hero-sub { font-size: 14px; opacity: 0.85; margin-bottom: 18px; line-height: 1.6; }
+.hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 14px; font-size: 12px; font-weight: 500; }
+.hero-note { font-size: 12px; opacity: 0.7; line-height: 1.8; border-top: 1px solid rgba(255,255,255,0.2); padding-top: 14px; }
+.controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; margin-bottom: 20px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field label { font-size: 11px; font-weight: 700; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.6px; }
+select { padding: 9px 14px; border: 1.5px solid #dde2e8; border-radius: 6px; font-size: 14px; color: #2c3e50; background: white; min-width: 200px; cursor: pointer; }
+select:focus { outline: none; border-color: #5dade2; }
+.btn { padding: 9px 22px; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.btn-primary { background: #2980b9; color: white; }
+.btn-primary:hover { background: #2471a3; }
+.btn-secondary { background: #ecf0f1; color: #2c3e50; }
+.btn-secondary:hover { background: #dce1e7; }
+.status { padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-bottom: 16px; }
+.status.ok   { background: #eafaf1; color: #1e8449; border: 1px solid #a9dfbf; }
+.status.err  { background: #fdedec; color: #922b21; border: 1px solid #f1948a; }
+.status.info { background: #eaf4fb; color: #1a5276; border: 1px solid #aed6f1; }
+#result { min-height: 60px; padding: 20px; background: #f8fafc; border-radius: 8px; border: 1.5px solid #dde2e8; font-size: 15px; line-height: 1.6; }
+.result-value { font-size: 38px; font-weight: 700; color: #c0392b; margin: 6px 0; }
+.result-country { font-size: 20px; font-weight: 600; color: #1a3557; }
+.result-meta { font-size: 13px; color: #7f8c8d; margin-top: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { background: #1a3557; color: white; padding: 10px 14px; text-align: left; font-weight: 600; }
+td { padding: 9px 14px; border-bottom: 1px solid #eef0f3; }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: #f8fafc; }
+tr:hover td { background: #eaf4fb; }
+.prose { font-size: 14px; line-height: 1.85; color: #2c3e50; }
+.prose p { margin-bottom: 12px; }
+.prose h3 { font-size: 14px; font-weight: 700; color: #1a3557; margin: 20px 0 8px; }
+.prose ul, .prose ol { padding-left: 22px; margin-bottom: 12px; }
+.prose li { margin-bottom: 7px; }
+.prose a { color: #2980b9; }
+.prose a:hover { text-decoration: underline; }
+.highlight { background: #fef9f0; border-left: 3px solid #f0a500; padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 14px 0; font-size: 13px; }
+.lang-tabs { display: flex; gap: 6px; margin-bottom: 20px; }
+.lang-btn { padding: 5px 18px; border: 1.5px solid #dde2e8; border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; background: white; color: #7f8c8d; transition: all 0.2s; }
+.lang-btn.active { background: #1a3557; color: white; border-color: #1a3557; }
+.lang-content { display: none; }
+.lang-content.active { display: block; }
+.citation-box { background: #f4f6f9; border: 1.5px solid #dde2e8; border-radius: 8px; padding: 16px 18px; font-size: 13px; line-height: 1.8; margin: 12px 0; }
+pre { font-size: 12px; line-height: 1.7; overflow-x: auto; white-space: pre-wrap; word-break: break-all; font-family: 'Courier New', monospace; background: #2c3e50; color: #ecf0f1; padding: 14px 16px; border-radius: 6px; margin: 8px 0; }
+.year-table { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px,1fr)); gap: 8px; margin: 12px 0; }
+.year-row { background: #f8fafc; border: 1px solid #eef0f3; border-radius: 6px; padding: 7px 12px; font-size: 13px; display: flex; justify-content: space-between; }
+.year-row .yr { font-weight: 600; color: #1a3557; }
+.form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 18px; }
+.form-group label { font-size: 11px; font-weight: 700; color: #7f8c8d; text-transform: uppercase; letter-spacing: 0.6px; }
+.form-group input, .form-group select, .form-group textarea { padding: 10px 14px; border: 1.5px solid #dde2e8; border-radius: 6px; font-size: 14px; font-family: inherit; color: #2c3e50; transition: border-color 0.2s; width: 100%; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #5dade2; }
+.form-group textarea { resize: vertical; min-height: 120px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 540px) { .form-row { grid-template-columns: 1fr; } }
+.required { color: #e74c3c; }
+#form-feedback { margin-top: 14px; }
+.btn-link { background: none; border: none; color: #2980b9; cursor: pointer; font-size: 14px; text-decoration: underline; padding: 0; }
+.url-ph { color: #e67e22; font-weight: 600; }
+footer { text-align: center; font-size: 12px; color: #aab3bb; padding: 20px; border-top: 1px solid #e8edf3; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <h1>SSFSSR Web Calculator</h1>
+    <span class="sub">Supply Side Food Self-Sufficiency Ratio Database (2010–2023)</span>
+  </div>
+</header>
+<nav>
+  <button class="active" onclick="showPanel('top',this)">🏠 Top <span class="page-indicator">Page 1</span></button>
+  <button onclick="showPanel('about',this)">📖 About SSFSSR <span class="page-indicator">Page 2</span></button>
+  <button onclick="showPanel('terms',this)">📋 Terms &amp; Contact <span class="page-indicator">Page 3</span></button>
+</nav>
+
+<main>
+
+<!-- ═══ PAGE 1 TOP ═══ -->
+<div id="panel-top" class="panel active">
+  <div class="hero">
+    <h2>SSFSSR Web Calculator</h2>
+    <p class="hero-sub">Supply Side Food Self-Sufficiency Ratio Database (2010–2023)<br>サプライサイド食料自給率データベース（2010–2023）</p>
+    <div class="hero-badges">
+      <span class="badge">188 Countries</span>
+      <span class="badge">2010–2023</span>
+      <span class="badge">Based on 10-PCFSSR</span>
+      <span class="badge">World's First Unified Calculation</span>
+    </div>
+    <p class="hero-note">
+      This public application provides country-level SSFSSR results for 2010–2023, developed in accordance with the <strong>10 Principles for Calculating Food Self-Sufficiency Ratios (10-PCFSSR)</strong>. To the best of the knowledge of the Development Research Group, this is the world's first public application designed to calculate and present national food self-sufficiency ratios in a unified manner under common conditions.<br>
+      Provided for academic research, policy research, and other non-commercial purposes. All values are expressed as percentages (%). Blank indicates data not available.<br>
+      © 2026 Goro Takahashi / SSFSSR Development Research Group
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔍 Data Search — Country SSFSSR by Year</div>
+    <div id="load-status" class="status info">⏳ Loading data from Google Sheets…</div>
+    <div class="controls">
+      <div class="field">
+        <label>Country / 国</label>
+        <select id="country-sel"><option value="">— Loading… —</option></select>
+      </div>
+      <div class="field">
+        <label>Year / 年</label>
+        <select id="year-sel"></select>
+      </div>
+      <button class="btn btn-primary" onclick="lookup()">Search</button>
+      <button class="btn btn-secondary" onclick="showAll()">All Years</button>
+    </div>
+    <div id="result"><span style="color:#aab3bb">Select a country and year, then click Search.</span></div>
+  </div>
+
+  <div class="card" style="padding:16px 32px;">
+    <p class="prose" style="font-size:13px;">
+      For inquiries → <button class="btn-link" onclick="switchToTerms()">Contact / Inquiry Form (Page 3)</button> &nbsp;|&nbsp;
+      お問い合わせ → <button class="btn-link" onclick="switchToTerms()">Contact / Inquiry フォーム（Page 3）</button>
+    </p>
+  </div>
+</div>
+
+
+<!-- ═══ PAGE 2 ABOUT ═══ -->
+<div id="panel-about" class="panel">
+  <div class="lang-tabs">
+    <button class="lang-btn active" onclick="setLang('about','en',this)">English</button>
+    <button class="lang-btn" onclick="setLang('about','ja',this)">日本語</button>
+  </div>
+
+  <!-- EN -->
+  <div id="about-en" class="lang-content active">
+    <div class="card">
+      <div class="card-title">📖 About SSFSSR</div>
+      <div class="prose">
+        <p>SSFSSR is an indicator developed to measure the extent to which each country can meet its domestic food supply through its own food production. This database was developed in accordance with the <strong>10 Principles for Calculating Food Self-Sufficiency Ratios (10-PCFSSR)</strong>.</p>
+        <p>To the best of the knowledge of the Development Research Group, this is the world's first public application designed to calculate and present national food self-sufficiency ratios in a unified manner under common conditions.</p>
+        <h3>Main Data Sources</h3>
+        <ul>
+          <li>FAO FAOSTAT, <em>Food Balances</em> (2010–)</li>
+          <li>Where necessary: World Bank Open Data, USDA open data, and national government statistics</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📐 The 10 Principles for Calculating Food Self-Sufficiency Ratios (10-PCFSSR)</div>
+      <div class="prose">
+        <p>This database was developed on the basis of the <strong>10-PCFSSR</strong> — a set of principles stating that food self-sufficiency calculations should satisfy the following ten conditions:</p>
+        <ol>
+          <li><strong>A sufficient number of food items and an appropriate balance among them must be ensured.</strong> The number of items included must be large enough, and the balance among items must be adequate, so that actual food supply conditions are properly reflected.</li>
+          <li><strong>Primary and secondary products must both be appropriately represented, and their differences must be reflected in the calculation.</strong> The set of items used for calculation must include a balanced composition of primary and secondary products, and the differences in their nature must be properly taken into account.</li>
+          <li><strong>In principle, the same dataset must be used for calculating food self-sufficiency ratios across countries.</strong> As far as possible, the same dataset should be applied under common conditions to ensure cross-country comparability.</li>
+          <li><strong>All data used in the calculation must be publicly available free of charge and be reliable.</strong> The data must satisfy both openness and reliability.</li>
+          <li><strong>The data sources used in the calculation should be concentrated in one place.</strong> As far as possible, the calculation should be based on data produced by the same statistical authority or by a unified source.</li>
+          <li><strong>Continuity in the data used must be ensured.</strong> The data series should be continuous enough to allow year-to-year comparison and time-series analysis.</li>
+          <li><strong>If estimates are included, the reasons for and methods of estimation must be clearly stated.</strong> Whenever estimated values are used, both the reason for estimation and the estimation method must be made explicit.</li>
+          <li><strong>The calculated results must be reproducible.</strong> Anyone using the same calculation method should be able to reproduce the same results.</li>
+          <li><strong>The method must be applicable under common conditions across countries.</strong> It should not be a method that applies only to a particular country or region, but one suitable for international comparison.</li>
+          <li><strong>The formula must be clear and publicly disclosed.</strong> The calculation formula must be explicit and publicly available in a form that can be examined by third parties.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📚 Calculation Method &amp; References</div>
+      <div class="prose">
+        <p>For the basic concept and theoretical background of SSFSSR:</p>
+        <ul>
+          <li>Goro Takahashi, <em>A New Method for Calculating the Food Self-Sufficiency Ratio: Supply-Side Food Self-Sufficiency Ratio</em><br>
+          Springer Nature · <a href="https://link.springer.com/article/10.1186/s40066-025-00570-z" target="_blank">https://link.springer.com/article/10.1186/s40066-025-00570-z</a> (65-commodity basis)</li>
+        </ul>
+        <p>For the more practical calculation specifications and data structure:</p>
+        <ul>
+          <li><em>SSFSSR, Version 1.1 — Formal Specification, PPCR Structural Coefficients, 64-Commodity Framework, and 2023 Global Dataset</em><br>
+          Zenodo · <a href="https://doi.org/10.5281/zenodo.18889852" target="_blank">https://doi.org/10.5281/zenodo.18889852</a> (64-commodity basis)</li>
+        </ul>
+        <p>In this database, 64 commodities are classified into primary products (cereals, vegetables, rapeseed, etc.) and secondary products (livestock products, edible oils, etc.). All are ultimately converted into a primary-product basis in caloric terms. Secondary products are converted using <strong>PPCR</strong> (Primary Product Conversion Rate). When individual supply, production, or import data are reported as negative values, they are excluded from the calculation.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 Number of Reporting Units by Year</div>
+      <p class="prose" style="margin-bottom:12px;">Because the world average is included as a reference value, the actual number of countries is one less than the figure shown.</p>
+      <div class="year-table">
+        <div class="year-row"><span class="yr">2010</span><span>181</span></div>
+        <div class="year-row"><span class="yr">2011</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2012</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2013</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2014</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2015</span><span>178</span></div>
+        <div class="year-row"><span class="yr">2016</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2017</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2018</span><span>178</span></div>
+        <div class="year-row"><span class="yr">2019</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2020</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2021</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2022</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2023</span><span>175</span></div>
+      </div>
+      <p class="prose" style="margin-top:12px;"><strong>Unit:</strong> Percentage (%)</p>
+    </div>
+  </div><!-- /about-en -->
+
+  <!-- JA -->
+  <div id="about-ja" class="lang-content">
+    <div class="card">
+      <div class="card-title">📖 SSFSSRについて</div>
+      <div class="prose">
+        <p>SSFSSRは、各国が自国の食料生産によって国内食料供給をどの程度満たすことができるかを測定するために開発された指標です。本データベースは、<strong>国別食料自給率計算の10原則（10-PCFSSR）</strong>に基づいて構築されています。</p>
+        <p>開発研究グループの知る限り、各国の食料自給率を同一条件で統一的に計算し、公開アプリとして提供する世界初のアプリケーションです。</p>
+        <h3>主なデータソース</h3>
+        <ul>
+          <li>FAO FAOSTAT, <em>Food Balances</em> (2010–)</li>
+          <li>必要に応じて、世界銀行、USDA、各国政府統計</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📐 国別食料自給率計算の10原則（10-PCFSSR）</div>
+      <div class="prose">
+        <p>本データベースは、食料自給率計算が次の10の条件を満たすべきであるとする<strong>10-PCFSSR</strong>に基づいて開発されています。</p>
+        <ol>
+          <li>十分な品目数と品目間のバランスが確保されていること</li>
+          <li>一次産品と二次産品の差異が計算に反映されていること</li>
+          <li>各国比較に原則として同一データセットを用いること</li>
+          <li>使用データが無料公開され、信頼できること</li>
+          <li>データ源ができる限り一元化されていること</li>
+          <li>使用データに継続性があること</li>
+          <li>推計を含む場合、その理由と方法が明示されていること</li>
+          <li>計算結果に再現性があること</li>
+          <li>各国を同一条件で比較できる方法であること</li>
+          <li>計算式が明瞭で公開されていること</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📚 計算方法・参考文献</div>
+      <div class="prose">
+        <p>理論的背景：</p>
+        <ul>
+          <li>高橋五郎, <em>A New Method for Calculating the Food Self-Sufficiency Ratio: Supply-Side Food Self-Sufficiency Ratio</em><br>
+          Springer Nature · <a href="https://link.springer.com/article/10.1186/s40066-025-00570-z" target="_blank">https://link.springer.com/article/10.1186/s40066-025-00570-z</a>（65品目ベース）</li>
+        </ul>
+        <p>実務的な仕様：</p>
+        <ul>
+          <li><em>SSFSSR, Version 1.1 — Formal Specification, PPCR Structural Coefficients, 64-Commodity Framework, and 2023 Global Dataset</em><br>
+          Zenodo · <a href="https://doi.org/10.5281/zenodo.18889852" target="_blank">https://doi.org/10.5281/zenodo.18889852</a>（64品目ベース）</li>
+        </ul>
+        <p>本データベースでは64品目を一次産品と二次産品に区分し、すべてカロリー単位で一次産品ベースに統一して計算しています。二次産品は<strong>PPCR</strong>（Primary Product Conversion Rate）により換算しています。また、供給・生産・輸入の個別データがマイナス値の場合は計算対象から除外しています。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 各年の計算対象数</div>
+      <p class="prose" style="margin-bottom:12px;">各年の集計には世界平均値を参考値として含めているため、実際の国数は下記掲載数から1を差し引いた数です。</p>
+      <div class="year-table">
+        <div class="year-row"><span class="yr">2010年</span><span>181</span></div>
+        <div class="year-row"><span class="yr">2011年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2012年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2013年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2014年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2015年</span><span>178</span></div>
+        <div class="year-row"><span class="yr">2016年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2017年</span><span>169</span></div>
+        <div class="year-row"><span class="yr">2018年</span><span>178</span></div>
+        <div class="year-row"><span class="yr">2019年</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2020年</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2021年</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2022年</span><span>186</span></div>
+        <div class="year-row"><span class="yr">2023年</span><span>175</span></div>
+      </div>
+      <p class="prose" style="margin-top:12px;"><strong>単位：</strong>百分率（%）</p>
+    </div>
+  </div><!-- /about-ja -->
+</div><!-- /panel-about -->
+
+
+<!-- ═══ PAGE 3 TERMS & CONTACT ═══ -->
+<div id="panel-terms" class="panel">
+  <div class="lang-tabs">
+    <button class="lang-btn active" onclick="setLang('terms','en',this)">English</button>
+    <button class="lang-btn" onclick="setLang('terms','ja',this)">日本語</button>
+  </div>
+
+  <!-- EN -->
+  <div id="terms-en" class="lang-content active">
+    <div class="card">
+      <div class="card-title">⚖️ Terms of Use &amp; Disclaimer</div>
+      <div class="prose">
+        <p>The SSFSSR Database is provided for academic research, policy research, the promotion of understanding of food security, and other non-commercial research purposes. By accessing or using this database, users are deemed to have agreed to the following terms.</p>
+        <ol>
+          <li>The data contained in this database are calculated values derived from publicly available statistical sources. They are provided for research reference purposes only and should not be used as the sole basis for commercial, financial, or policy decision-making without independent verification.</li>
+          <li>The developer makes no warranties, express or implied, regarding the accuracy, completeness, or timeliness of the data. The developer shall not be held liable for any errors, omissions, losses, or consequences arising from the use of this database.</li>
+          <li>Users are responsible for ensuring that their use of this database complies with all applicable laws and regulations in their respective jurisdictions.</li>
+          <li>This database may be updated, revised, corrected, or discontinued without prior notice.</li>
+          <li>When using all or part of this database, users must provide proper attribution in accordance with the prescribed citation format.</li>
+          <li>Any commercial use, redistribution, resale, incorporation into another database, or continuous or large-scale reproduction of this database requires prior written permission from the developer.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 How to Cite</div>
+      <div class="prose">
+        <p>If you use this database in research papers, reports, policy documents, or other publications, please cite it as follows:</p>
+        <div class="citation-box">
+          <strong>Standard citation:</strong><br>
+          Takahashi, G. (2026). <em>Supply Side Food Self-Sufficiency Ratio (SSFSSR) Database, 2010–2023</em>. SSFSSR Development Research Group. <span class="url-ph">[Public URL — to be added before publication]</span>
+        </div>
+        <div class="citation-box">
+          <strong>BibTeX:</strong>
+<pre>@misc{takahashi_ssfssr_database_2026,
+  author    = {Goro Takahashi},
+  title     = {Supply Side Food Self-Sufficiency Ratio
+               ({SSFSSR}) Database, 2010--2023},
+  year      = {2026},
+  publisher = {SSFSSR Development Research Group},
+  note      = {SSFSSR final database for academic
+               and policy research},
+  howpublished = {\url{[Public URL]}}
+}</pre>
+        </div>
+        <p class="highlight">⚠ Before publication, replace <strong>[Public URL]</strong> with the actual URL of this application.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">©️ Copyright &amp; Permitted Use</div>
+      <div class="prose">
+        <p>© 2026 Goro Takahashi / SSFSSR Development Research Group. All rights reserved.</p>
+        <p>This database and its contents are protected under applicable copyright law and related regulations. Unauthorized reproduction, redistribution, resale, or commercial use without prior written permission from the developer is prohibited.</p>
+        <h3>Permitted Uses</h3>
+        <ul>
+          <li>Non-commercial academic research and education, including NGO activities</li>
+          <li>Policy analysis and governmental research</li>
+          <li>Reproduction of limited extracts with proper citation</li>
+          <li>Other uses individually authorized by the developer</li>
+        </ul>
+        <h3>Restricted Uses</h3>
+        <ul>
+          <li>Commercial redistribution or resale of the data</li>
+          <li>Incorporation into another database, commercial service, or paid content without permission</li>
+          <li>Use without attribution</li>
+          <li>Reproduction, continuous republication, or third-party provision of the whole database or any substantial part of it</li>
+        </ul>
+        <p>For permissions beyond the scope above, please use the Contact / Inquiry form below.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✉️ Contact / Inquiry Form</div>
+      <div class="prose" style="margin-bottom:18px;">
+        <p>We welcome inquiries regarding the SSFSSR public application, displayed results, methodology, citation, and permissions.</p>
+        <p><strong>Reply policy:</strong> Inquiries will be reviewed and replies provided when necessary. Depending on the nature of the inquiry, a reply may not always be provided. A response may take time. For requests concerning commercial use, permission to reproduce, or permission to use the data, please describe your request clearly.</p>
+        <p><strong>Privacy:</strong> Information submitted through the contact form or email will be used only for handling inquiries.</p>
+      </div>
+
+      <div id="form-feedback"></div>
+      <!-- ★ Replace YOUR_FORM_ID with your Formspree endpoint ID ★ -->
+      <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <input type="hidden" name="_subject" value="SSFSSR Database Inquiry (Supply Side Food Self-Sufficiency Ratio)">
+        <input type="text" name="_gotcha" style="display:none">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Name <span class="required">*</span></label>
+            <input type="text" name="name" placeholder="e.g. Dr. Jane Smith" required>
+          </div>
+          <div class="form-group">
+            <label>Email <span class="required">*</span></label>
+            <input type="email" name="email" placeholder="jane@university.edu" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Affiliation / Institution</label>
+            <input type="text" name="affiliation" placeholder="e.g. University of Tokyo">
+          </div>
+          <div class="form-group">
+            <label>Country</label>
+            <input type="text" name="country" placeholder="e.g. Japan">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Inquiry Type <span class="required">*</span></label>
+          <select name="inquiry_type" required>
+            <option value="">— Please select —</option>
+            <option value="methodology">Methodology / Calculation Method</option>
+            <option value="data_access">Data Access / Full Dataset Request</option>
+            <option value="collaboration">Research Collaboration</option>
+            <option value="citation">Citation / Publication Use</option>
+            <option value="permission">Permission for Commercial / Reproduction Use</option>
+            <option value="discrepancy">Data Discrepancy / Error Report</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message <span class="required">*</span></label>
+          <textarea name="message" placeholder="Please describe your inquiry in detail. For commercial use or reproduction permission requests, please describe your intended use clearly." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;padding:13px;font-size:15px;">Send Inquiry</button>
+      </form>
+
+      <p style="font-size:13px;color:#7f8c8d;margin-top:18px;">
+        📬 You may also contact us directly by email:
+        <strong><span class="url-ph">[contact@example.com — replace before publication]</span></strong>
+      </p>
+    </div>
+  </div><!-- /terms-en -->
+
+  <!-- JA -->
+  <div id="terms-ja" class="lang-content">
+    <div class="card">
+      <div class="card-title">⚖️ 利用条件および免責事項</div>
+      <div class="prose">
+        <p>SSFSSR（Supply Side Food Self-Sufficiency Ratio）データベースは、学術研究、政策研究、食料安全保障の理解の増進、および非商業的利用のために提供されます。本データベースを利用することにより、利用者は以下に同意したものとみなされます。</p>
+        <ol>
+          <li>本データベースの数値は、公開統計に基づいて作成された計算値であり、研究参考用です。独立した検証なしに、商業上、財務上、または政策上の意思決定の唯一の根拠として用いるべきではありません。</li>
+          <li>開発者は、データの正確性、完全性、最新性について保証しません。また、本データベースの利用によって生じた誤り、欠落、損失、または結果について責任を負いません。</li>
+          <li>利用者は、適用される法令および規則に適合するよう本データベースを利用する責任を負います。</li>
+          <li>本データベースは、予告なく更新、修正、または公開中止されることがあります。</li>
+          <li>本データベースの全部または一部を利用する場合は、所定の形式で出典を明示してください。</li>
+          <li>商業利用、再配布、再販売、独自データベースへの組込み、または継続的・大規模な転載には、事前の書面による許可が必要です。</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 引用方法</div>
+      <div class="prose">
+        <div class="citation-box">
+          <strong>引用例：</strong><br>
+          Takahashi, G. (2026). <em>Supply Side Food Self-Sufficiency Ratio (SSFSSR) Database, 2010–2023</em>. SSFSSR Development Research Group. <span class="url-ph">[公開URL — 公開前に追記]</span>
+        </div>
+        <div class="citation-box">
+          <strong>BibTeX：</strong>
+<pre>@misc{takahashi_ssfssr_database_2026,
+  author    = {Goro Takahashi},
+  title     = {Supply Side Food Self-Sufficiency Ratio
+               ({SSFSSR}) Database, 2010--2023},
+  year      = {2026},
+  publisher = {SSFSSR Development Research Group},
+  note      = {SSFSSR final database for academic
+               and policy research},
+  howpublished = {\url{[公開URL]}}
+}</pre>
+        </div>
+        <p class="highlight">⚠ 公開前に <strong>[公開URL]</strong> を本アプリの実際のURLに置き換えてください。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">©️ 著作権および利用許諾</div>
+      <div class="prose">
+        <p>© 2026 Goro Takahashi / SSFSSR Development Research Group. All rights reserved.</p>
+        <p>本データベースおよびその内容は、著作権法その他の関連法令により保護されています。開発者の事前の書面による許可なく、本データの無断複製、無断再配布、無断再販売、または商業的利用を行うことは禁止されています。</p>
+        <h3>許可される利用</h3>
+        <ul>
+          <li>非商業的な学術研究および教育、NGO活動</li>
+          <li>政策分析および政府研究</li>
+          <li>適切な引用を付した限定的な抜粋の転載</li>
+          <li>開発者が個別に許可した利用</li>
+        </ul>
+        <h3>制限される利用</h3>
+        <ul>
+          <li>データの商業的再配布または再販売</li>
+          <li>許可なく独自のデータベース、商用サービス、有料コンテンツへ組み込むこと</li>
+          <li>出典を明示しない利用</li>
+          <li>データベース全体または実質的部分の複製、継続的転載、第三者提供</li>
+        </ul>
+        <p>上記を超える利用を希望する場合は、Englishタブのフォームをご利用ください（日本語でのご記入も可能です）。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✉️ お問い合わせ</div>
+      <div class="prose">
+        <p>SSFSSR公開アプリ、表示結果、計算方法、引用方法、利用許諾に関するお問い合わせを受け付けています。</p>
+        <p><strong>回答方針：</strong>お問い合わせ内容を確認のうえ、必要に応じて回答します。内容によっては回答できない場合があります。回答まで時間を要する場合があります。商業利用、転載許可、データ利用許可に関する照会は、内容を明記してください。</p>
+        <p><strong>問い合わせ方法：</strong></p>
+        <ul>
+          <li>「English」タブのフォーム（日本語でのご記入も可能です）</li>
+          <li>問い合わせメール：<strong><span class="url-ph">[contact@example.com — 公開前に置き換えてください]</span></strong></li>
+        </ul>
+        <p>送信された情報は、お問い合わせ対応のためにのみ使用します。</p>
+      </div>
+    </div>
+  </div><!-- /terms-ja -->
+</div><!-- /panel-terms -->
+
+</main>
+
+<footer>
+  SSFSSR Web Calculator — Supply Side Food Self-Sufficiency Ratio Database (2010–2023)<br>
+  © 2026 Goro Takahashi / SSFSSR Development Research Group
+</footer>
+
+<script>
+// ══════════════════════════════════════════
+//  ★ 設定：Google スプレッドシートの公開 CSV URL
+//  手順: スプレッドシート → ファイル → 共有 → ウェブに公開
+//        → CSV形式 → 公開 → 表示されたURLをここに貼る
+// ══════════════════════════════════════════
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/1LpbwXSAHfY9QGtzK25B5nGhMf6eTpZDjE3mn3ZG3ELE/export?format=csv&gid=249714700';
+
+let data = [];
+
+function showPanel(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function switchToTerms() {
+  showPanel('terms', document.querySelector('nav button:nth-child(3)'));
+}
+
+function setLang(page, lang, btn) {
+  document.querySelectorAll(`#panel-${page} .lang-content`).forEach(el => el.classList.remove('active'));
+  document.querySelectorAll(`#panel-${page} .lang-btn`).forEach(b => b.classList.remove('active'));
+  document.getElementById(`${page}-${lang}`).classList.add('active');
+  btn.classList.add('active');
+}
+
+async function loadData() {
+  try {
+    const res = await fetch(CSV_URL, { cache: 'no-cache' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const lines = text.trim().split('\n');
+    data = lines.slice(1).map(line => {
+     const match = line.match(/^(".*?"|[^,]*),(".*?"|[^,]*),(".*?"|[^,]*),(".*?"|[^,]*)/);
+if (!match) return null;
+const v = match.slice(1).map(s => s.trim().replace(/^"|"$/g, '')); 
+
+    const countries = [...new Set(data.map(d => d.country))].sort();
+    const cSel = document.getElementById('country-sel');
+    cSel.innerHTML = '<option value="">— Select Country —</option>'
+      + countries.map(c => `<option value="${c}">${c}</option>`).join('');
+
+    const years = [...new Set(data.map(d => d.year))].sort((a, b) => a - b);
+    const ySel = document.getElementById('year-sel');
+    ySel.innerHTML = years.map(y => `<option value="${y}">${y}</option>`).join('');
+    ySel.value = Math.max(...years);
+
+    document.getElementById('load-status').className = 'status ok';
+    document.getElementById('load-status').innerHTML =
+      `✅ Data loaded: ${data.length.toLocaleString()} records · ${countries.length} countries · ${years[0]}–${years[years.length-1]}`;
+  } catch (e) {
+    document.getElementById('load-status').className = 'status err';
+    document.getElementById('load-status').innerHTML =
+      '⚠ Failed to load data. Make sure the Google Sheets URL is set correctly and the sheet is published to the web (File → Share → Publish to web → CSV format).';
+    console.error(e);
+  }
+}
+
+function lookup() {
+  const country = document.getElementById('country-sel').value;
+  const year = parseInt(document.getElementById('year-sel').value);
+  if (!country) { setResult('<span style="color:#aab3bb">Please select a country.</span>'); return; }
+  const row = data.find(d => d.country === country && d.year === year);
+  if (row) {
+    setResult(`
+      <div class="result-country">${row.country} <span style="font-size:14px;color:#7f8c8d">(${row.iso3})</span></div>
+      <div class="result-value">${row.value}%</div>
+      <div class="result-meta">Supply Side Food Self-Sufficiency Ratio (SSFSSR) · ${row.year}</div>`);
+  } else {
+    setResult('<span style="color:#aab3bb">No data found for the selected combination.</span>');
+  }
+}
+
+function showAll() {
+  const country = document.getElementById('country-sel').value;
+  if (!country) { setResult('<span style="color:#aab3bb">Please select a country.</span>'); return; }
+  const rows = data.filter(d => d.country === country).sort((a, b) => a.year - b.year);
+  if (!rows.length) { setResult('<span>No data found.</span>'); return; }
+  const min = Math.min(...rows.map(r => r.value));
+  const max = Math.max(...rows.map(r => r.value));
+  setResult(`
+    <div class="result-country" style="margin-bottom:12px">${rows[0].country} <span style="font-size:14px;color:#7f8c8d">(${rows[0].iso3})</span></div>
+    <table>
+      <tr><th>Year</th><th>SSFSSR (%)</th></tr>
+      ${rows.map(r => `<tr><td>${r.year}</td>
+        <td style="${r.value===max?'color:#c0392b;font-weight:700':r.value===min?'color:#27ae60;font-weight:700':''}">${isNaN(r.value)?'—':r.value+'%'}</td></tr>`).join('')}
+    </table>
+    <p style="font-size:12px;color:#7f8c8d;margin-top:10px">
+      Min: ${min}% &nbsp;|&nbsp; Max: ${max}% &nbsp;|&nbsp;
+      Change: ${(rows[rows.length-1].value - rows[0].value).toFixed(1)}pp (${rows[0].year}→${rows[rows.length-1].year})
+    </p>`);
+}
+
+function setResult(html) { document.getElementById('result').innerHTML = html; }
+
+document.getElementById('contact-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const fb = document.getElementById('form-feedback');
+  const btn = this.querySelector('button[type="submit"]');
+  btn.disabled = true; btn.textContent = 'Sending…';
+  try {
+    const res = await fetch(this.action, {
+      method: 'POST', body: new FormData(this), headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      fb.innerHTML = '<div class="status ok">✅ Your inquiry has been sent successfully. We will reply when necessary.</div>';
+      this.reset();
+    } else { throw new Error(); }
+  } catch {
+    fb.innerHTML = '<div class="status err">⚠ Failed to send. Please try again or email us directly.</div>';
+  }
+  btn.disabled = false; btn.textContent = 'Send Inquiry';
+});
+
+loadData();
+</script>
+</body>
+</html>
