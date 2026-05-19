@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SSFSSR Policy Brief — Multilingual</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, 'Noto Sans CJK SC', 'Source Han Sans CN', sans-serif; background: #f7f7f5; color: #1a1a18; line-height: 1.6; }
+  .page { max-width: 760px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+  .site-header { margin-bottom: 2.5rem; padding-bottom: 1.25rem; border-bottom: 0.5px solid #d3d1c7; }
+  .site-header h1 { font-size: 15px; font-weight: 500; color: #5f5e5a; letter-spacing: 0.04em; }
+
+  /* Language tabs */
+  .lang-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 2.5rem; }
+  .lang-btn { padding: 10px 20px; border-radius: 8px; border: 1.5px solid #b4b2a9; background: #fff; color: #5f5e5a; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .lang-btn:hover { border-color: #1D9E75; color: #1D9E75; }
+  .lang-btn.active { background: #1D9E75; border-color: #1D9E75; color: #fff; }
+  .lang-label { font-size: 10px; display: block; opacity: 0.75; font-weight: 400; margin-top: 1px; }
+
+  /* Brief */
+  .brief { display: none; }
+  .brief.active { display: block; }
+  .pb-header { border-left: 3px solid #1D9E75; padding-left: 1.25rem; margin-bottom: 2rem; }
+  .pb-kicker { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #888780; margin: 0 0 6px; }
+  .pb-title { font-size: 24px; font-weight: 500; color: #1a1a18; margin: 0 0 6px; line-height: 1.35; }
+  .pb-subtitle { font-size: 14px; color: #5f5e5a; margin: 0; }
+
+  /* Metrics */
+  .pb-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 2rem; }
+  .pb-metric { background: #f1efe8; border-radius: 8px; padding: 0.9rem 1rem; }
+  .pb-metric-num { font-size: 24px; font-weight: 500; color: #1D9E75; display: block; }
+  .pb-metric-label { font-size: 12px; color: #888780; margin-top: 3px; }
+
+  /* Sections */
+  .pb-section { margin-bottom: 1.75rem; }
+  .pb-section-title { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #888780; margin: 0 0 0.6rem; font-weight: 500; }
+  .pb-body { font-size: 14px; line-height: 1.85; color: #2c2c2a; margin: 0; }
+
+  /* Compare boxes */
+  .pb-compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 0.75rem; }
+  .pb-compare-box { padding: 0.9rem 1rem; border-radius: 8px; font-size: 13px; line-height: 1.75; }
+  .pb-box-old { background: #fcebeb; color: #a32d2d; border: 0.5px solid #f7c1c1; }
+  .pb-box-new { background: #e1f5ee; color: #0f6e56; border: 0.5px solid #9fe1cb; }
+  .pb-box-label { font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500; opacity: 0.75; margin-bottom: 5px; }
+
+  /* CTA */
+  .pb-cta { border: 1px solid #b4b2a9; border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; cursor: pointer; text-decoration: none; color: inherit; transition: border-color 0.15s; }
+  .pb-cta:hover { border-color: #1D9E75; }
+  .pb-cta-icon { font-size: 2rem; color: #1D9E75; flex-shrink: 0; }
+  .pb-cta-text { flex: 1; }
+  .pb-cta-label { font-size: 11px; letter-spacing: 0.07em; text-transform: uppercase; color: #888780; margin: 0 0 4px; }
+  .pb-cta-url { font-size: 14px; font-weight: 500; color: #1D9E75; margin: 0; word-break: break-all; }
+  .pb-arrow { font-size: 1.2rem; color: #888780; }
+  .pb-links { font-size: 13px; color: #888780; line-height: 1.7; }
+  .pb-link { color: #1D9E75; text-decoration: none; }
+  .pb-link:hover { text-decoration: underline; }
+
+  /* Footer */
+  .pb-footer { border-top: 0.5px solid #d3d1c7; padding-top: 1rem; display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .pb-cred { font-size: 12px; color: #888780; display: flex; align-items: center; gap: 5px; }
+
+  @media (max-width: 520px) {
+    .pb-metrics { grid-template-columns: repeat(3, 1fr); }
+    .pb-compare { grid-template-columns: 1fr; }
+    .page { padding: 1.5rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="site-header">
+    <h1>SSFSSR Policy Brief &nbsp;·&nbsp; Supply-Side Food Self-Sufficiency Ratio</h1>
+  </div>
+
+  <div class="lang-tabs">
+    <button class="lang-btn active" onclick="switchLang('en', this)">English<span class="lang-label">英語</span></button>
+    <button class="lang-btn" onclick="switchLang('ja', this)">日本語<span class="lang-label">Japanese</span></button>
+    <button class="lang-btn" onclick="switchLang('fr', this)">Français<span class="lang-label">フランス語</span></button>
+    <button class="lang-btn" onclick="switchLang('es', this)">Español<span class="lang-label">スペイン語</span></button>
+    <button class="lang-btn" onclick="switchLang('zh', this)">中文<span class="lang-label">中国語</span></button>
+  </div>
+
+  <!-- ENGLISH -->
+  <div class="brief active" id="brief-en">
+    <div class="pb-header">
+      <p class="pb-kicker">Policy brief · Food security measurement</p>
+      <h2 class="pb-title">A new way to measure national food self-sufficiency</h2>
+      <p class="pb-subtitle">The Supply-Side Food Self-Sufficiency Ratio (SSFSSR) — open data, freely available</p>
+    </div>
+    <div class="pb-metrics">
+      <div class="pb-metric"><span class="pb-metric-num">188</span><span class="pb-metric-label">Countries covered</span></div>
+      <div class="pb-metric"><span class="pb-metric-num">64</span><span class="pb-metric-label">Food commodities</span></div>
+      <div class="pb-metric"><span class="pb-metric-num">2010–23</span><span class="pb-metric-label">Time series</span></div>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">The problem with conventional measures</p>
+      <p class="pb-body">The conventional food self-sufficiency ratio (CFSSR) focuses almost entirely on cereal grains. It excludes livestock products, edible oils, dairy, sugar, seafood, and dozens of other foods that make up the modern diet — making cross-country comparisons unreliable and policy decisions poorly informed.</p>
+      <div class="pb-compare">
+        <div class="pb-compare-box pb-box-old"><div class="pb-box-label">CFSSR — conventional</div>Grain-centred only · Omits secondary products · Narrow country coverage · Not globally unified · Weight-based aggregation</div>
+        <div class="pb-compare-box pb-box-new"><div class="pb-box-label">SSFSSR — new method</div>64 food commodities · Primary &amp; secondary products · 188 countries · Unified FAOSTAT basis · Kilocalorie-based calculation</div>
+      </div>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">What makes SSFSSR different</p>
+      <p class="pb-body">SSFSSR converts all food commodities into kilocalories before aggregation. Secondary products — meat, dairy, edible oils — are further converted into their primary-equivalent quantities using the Primary Product Conversion Rate (PPCR), eliminating double-counting and capturing the full food supply chain on a common caloric basis. All calculations use publicly available FAOSTAT data and are fully reproducible.<br><br>A key finding: each secondary product such as meat, dairy, or edible oils requires a large quantity of primary crops to produce. SSFSSR captures this relationship through the Primary Product Conversion Rate (PPCR) — a coefficient developed as part of this framework. Reducing PPCR, that is, producing secondary products more efficiently, raises a country's self-sufficiency ratio without expanding primary production.</p>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">Look up your country now</p>
+      <a class="pb-cta" href="https://ssfssr-app.github.io/ssfssr-app/" target="_blank">
+        <span class="pb-cta-icon">🌐</span>
+        <div class="pb-cta-text"><p class="pb-cta-label">Free interactive database</p><p class="pb-cta-url">ssfssr-app.github.io/ssfssr-app</p></div>
+        <span class="pb-arrow">→</span>
+      </a>
+      <p class="pb-links">Methodology &amp; data: <a class="pb-link" href="https://doi.org/10.5281/zenodo.18897195" target="_blank">doi.org/10.5281/zenodo.18897195</a> &nbsp;·&nbsp; Peer-reviewed article: <a class="pb-link" href="https://doi.org/10.1186/s40066-025-00570-z" target="_blank">Agriculture &amp; Food Security (Springer, 2026)</a></p>
+    </div>
+    <div class="pb-footer">
+      <span class="pb-cred">🏛 Goro Takahashi, Aichi University, Japan &nbsp;<a href="https://orcid.org/0000-0002-4422-6293" target="_blank" style="color:#1D9E75; font-size:11px;">ORCID 0000-0002-4422-6293</a></span>
+      <span class="pb-cred">✓ <a href="https://knowledge4policy.ec.europa.eu/publication/new-method-calculating-food-self-sufficiency-ratio-supply-side-food-self-sufficiency_en" target="_blank" style="color:#888780;">Listed on EU Knowledge4Policy (K4P)</a></span>
+      <span class="pb-cred">🔓 CC BY 4.0 · Free to use with attribution</span>
+    </div>
+  </div>
+
+  <!-- JAPANESE -->
+  <div class="brief" id="brief-ja">
+    <div class="pb-header">
+      <p class="pb-kicker">政策ブリーフ · 食料安全保障の測定</p>
+      <h2 class="pb-title">国家の食料自給率を測る新しい方法</h2>
+      <p class="pb-subtitle">供給側食料自給率（SSFSSR）— オープンデータ、無償公開</p>
+    </div>
+    <div class="pb-metrics">
+      <div class="pb-metric"><span class="pb-metric-num">188</span><span class="pb-metric-label">対象国数</span></div>
+      <div class="pb-metric"><span class="pb-metric-num">64</span><span class="pb-metric-label">食料品目数</span></div>
+      <div class="pb-metric"><span class="pb-metric-num">2010–23</span><span class="pb-metric-label">時系列</span></div>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">従来の指標の問題点</p>
+      <p class="pb-body">従来型食料自給率（CFSSR）はほぼ穀物のみを対象としており、畜産物・食用油・乳製品・砂糖・水産物など、現代の食生活を構成する多くの食料品を除外している。そのため国際比較の信頼性が低く、政策判断の根拠として不十分である。</p>
+      <div class="pb-compare">
+        <div class="pb-compare-box pb-box-old"><div class="pb-box-label">CFSSR — 従来型</div>穀物中心 · 二次産品を除外 · 対象国が限定的 · 国際的統一基準なし · 重量ベース集計</div>
+        <div class="pb-compare-box pb-box-new"><div class="pb-box-label">SSFSSR — 新方式</div>64品目 · 一次・二次産品を包括 · 188か国 · FAOSTAT統一基準 · カロリーベース計算</div>
+      </div>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">SSFSSRの特徴</p>
+      <p class="pb-body">SSFSSRはすべての食料品目をカロリー（kcal）に換算してから集計する。肉類・乳製品・食用油などの二次産品は、一次産品換算率（Primary Product Conversion Rate：PPCR）を用いて一次産品相当量に変換することで二重計算を排除し、食料供給チェーン全体を共通のカロリー基準で把握する。すべての計算にはFAOSTATの公開データを使用し、完全に再現可能である。<br><br>重要な知見：肉類・乳製品・食用油などの二次産品を生産するためには、大量の一次農産物が必要となる。SSFSSRはこの関係を、本研究で独自に開発したPPCR係数によって捉える。PPCRを低下させること、すなわち二次産品の生産効率を高めることは、一次生産を拡大せずとも食料自給率を向上させることを意味する。</p>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">今すぐ自国のデータを確認する</p>
+      <a class="pb-cta" href="https://ssfssr-app.github.io/ssfssr-app/" target="_blank">
+        <span class="pb-cta-icon">🌐</span>
+        <div class="pb-cta-text"><p class="pb-cta-label">無償インタラクティブ・データベース</p><p class="pb-cta-url">ssfssr-app.github.io/ssfssr-app</p></div>
+        <span class="pb-arrow">→</span>
+      </a>
+      <p class="pb-links">方法論・データファイル・PPCR係数：<a class="pb-link" href="https://doi.org/10.5281/zenodo.18897195" target="_blank">doi.org/10.5281/zenodo.18897195</a> &nbsp;·&nbsp; 査読論文：<a class="pb-link" href="https://doi.org/10.1186/s40066-025-00570-z" target="_blank">Agriculture &amp; Food Security（Springer、2026年）</a></p>
+    </div>
+    <div class="pb-footer">
+      <span class="pb-cred">🏛 高橋五郎、愛知大学、日本 &nbsp;<a href="https://orcid.org/0000-0002-4422-6293" target="_blank" style="color:#1D9E75; font-size:11px;">ORCID 0000-0002-4422-6293</a></span>
+      <span class="pb-cred">✓ <a href="https://knowledge4policy.ec.europa.eu/publication/new-method-calculating-food-self-sufficiency-ratio-supply-side-food-self-sufficiency_en" target="_blank" style="color:#888780;">EU Knowledge4Policy（K4P）収録</a></span>
+      <span class="pb-cred">🔓 CC BY 4.0 · 出典明示の上、無償利用可</span>
+    </div>
+  </div>
+
+  <!-- FRENCH -->
+  <div class="brief" id="brief-fr">
+    <div class="pb-header">
+      <p class="pb-kicker">Note de politique · Mesure de la sécurité alimentaire</p>
+      <h2 class="pb-title">Une nouvelle méthode pour mesurer l'autosuffisance alimentaire nationale</h2>
+      <p class="pb-subtitle">Le Taux d'autosuffisance alimentaire côté offre (SSFSSR) — données ouvertes, librement accessibles</p>
+    </div>
+    <div class="pb-metrics">
+      <div class="pb-metric"><span class="pb-metric-num">188</span><span class="pb-metric-label">Pays couverts</span></div>
+      <div class="pb-metric"><span class="pb-metric-num">64</span><span class="pb-metric-label">Produits alimentaires</span></div>
+      <div class="pb-metric"><span class="pb-metric-num">2010–23</span><span class="pb-metric-label">Série temporelle</span></div>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">Le problème des mesures conventionnelles</p>
+      <p class="pb-body">Le taux d'autosuffisance alimentaire conventionnel (CFSSR) se concentre presque exclusivement sur les céréales. Il exclut les produits d'élevage, les huiles alimentaires, les produits laitiers, le sucre, les produits de la mer et des dizaines d'autres aliments qui constituent l'alimentation moderne — rendant les comparaisons entre pays peu fiables et les décisions politiques mal éclairées.</p>
+      <div class="pb-compare">
+        <div class="pb-compare-box pb-box-old"><div class="pb-box-label">CFSSR — conventionnel</div>Centré sur les céréales · Omet les produits secondaires · Couverture limitée · Non unifié · Agrégation en poids</div>
+        <div class="pb-compare-box pb-box-new"><div class="pb-box-label">SSFSSR — nouvelle méthode</div>64 produits alimentaires · Produits primaires et secondaires · 188 pays · Base FAOSTAT unifiée · Calcul en kilocalories</div>
+      </div>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">Ce qui distingue le SSFSSR</p>
+      <p class="pb-body">Le SSFSSR convertit l'ensemble des produits alimentaires en kilocalories avant agrégation. Les produits secondaires — viande, produits laitiers, huiles alimentaires — sont en outre convertis en équivalents primaires à l'aide du Primary Product Conversion Rate (PPCR), éliminant ainsi les doubles comptages et restituant l'intégralité de la chaîne d'approvisionnement alimentaire sur une base calorique commune. Tous les calculs utilisent des données FAOSTAT librement accessibles et sont entièrement reproductibles.<br><br>Un résultat clé : chaque produit secondaire, tel que la viande, les produits laitiers ou les huiles alimentaires, nécessite une grande quantité de cultures primaires pour être produit. Le SSFSSR capture cette relation par le biais du Primary Product Conversion Rate (PPCR) — un coefficient développé dans le cadre de cette méthode. Réduire le PPCR, c'est-à-dire produire les produits secondaires de manière plus efficiente, améliore le taux d'autosuffisance alimentaire d'un pays sans augmenter la production primaire.</p>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">Consultez les données de votre pays</p>
+      <a class="pb-cta" href="https://ssfssr-app.github.io/ssfssr-app/" target="_blank">
+        <span class="pb-cta-icon">🌐</span>
+        <div class="pb-cta-text"><p class="pb-cta-label">Base de données interactive gratuite</p><p class="pb-cta-url">ssfssr-app.github.io/ssfssr-app</p></div>
+        <span class="pb-arrow">→</span>
+      </a>
+      <p class="pb-links">Méthodologie &amp; données : <a class="pb-link" href="https://doi.org/10.5281/zenodo.18897195" target="_blank">doi.org/10.5281/zenodo.18897195</a> &nbsp;·&nbsp; Article évalué par les pairs : <a class="pb-link" href="https://doi.org/10.1186/s40066-025-00570-z" target="_blank">Agriculture &amp; Food Security (Springer, 2026)</a></p>
+    </div>
+    <div class="pb-footer">
+      <span class="pb-cred">🏛 Goro Takahashi, Université Aichi, Japon &nbsp;<a href="https://orcid.org/0000-0002-4422-6293" target="_blank" style="color:#1D9E75; font-size:11px;">ORCID 0000-0002-4422-6293</a></span>
+      <span class="pb-cred">✓ <a href="https://knowledge4policy.ec.europa.eu/publication/new-method-calculating-food-self-sufficiency-ratio-supply-side-food-self-sufficiency_en" target="_blank" style="color:#888780;">Référencé sur EU Knowledge4Policy (K4P)</a></span>
+      <span class="pb-cred">🔓 CC BY 4.0 · Libre d'utilisation avec attribution</span>
+    </div>
+  </div>
+
+  <!-- SPANISH -->
+  <div class="brief" id="brief-es">
+    <div class="pb-header">
+      <p class="pb-kicker">Nota de política · Medición de la seguridad alimentaria</p>
+      <h2 class="pb-title">Un nuevo método para medir la autosuficiencia alimentaria nacional</h2>
+      <p class="pb-subtitle">La Tasa de autosuficiencia alimentaria del lado de la oferta (SSFSSR) — datos abiertos, de libre acceso</p>
+    </div>
+    <div class="pb-metrics">
+      <div class="pb-metric"><span class="pb-metric-num">188</span><span class="pb-metric-label">Países cubiertos</span></div>
+      <div class="pb-metric"><span class="pb-metric-num">64</span><span class="pb-metric-label">Productos alimentarios</span></div>
+      <div class="pb-metric"><span class="pb-metric-num">2010–23</span><span class="pb-metric-label">Serie temporal</span></div>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">El problema de las medidas convencionales</p>
+      <p class="pb-body">La tasa de autosuficiencia alimentaria convencional (CFSSR) se centra casi exclusivamente en los cereales. Excluye los productos ganaderos, los aceites alimentarios, los lácteos, el azúcar, los productos del mar y decenas de otros alimentos que conforman la dieta moderna — lo que hace que las comparaciones entre países sean poco fiables y que las decisiones políticas estén mal fundamentadas.</p>
+      <div class="pb-compare">
+        <div class="pb-compare-box pb-box-old"><div class="pb-box-label">CFSSR — convencional</div>Solo cereales · Omite productos secundarios · Cobertura limitada · No unificado · Agregación en peso</div>
+        <div class="pb-compare-box pb-box-new"><div class="pb-box-label">SSFSSR — nuevo método</div>64 productos alimentarios · Productos primarios y secundarios · 188 países · Base FAOSTAT unificada · Cálculo en kilocalorías</div>
+      </div>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">Lo que distingue al SSFSSR</p>
+      <p class="pb-body">El SSFSSR convierte todos los productos alimentarios en kilocalorías antes de la agregación. Los productos secundarios — carne, lácteos, aceites alimentarios — se convierten además en equivalentes primarios mediante el Primary Product Conversion Rate (PPCR), eliminando la doble contabilización y capturando la totalidad de la cadena de suministro alimentario sobre una base calórica común. Todos los cálculos utilizan datos de FAOSTAT de libre acceso y son totalmente reproducibles.<br><br>Un hallazgo clave: cada producto secundario, como la carne, los lácteos o los aceites alimentarios, requiere una gran cantidad de cultivos primarios para su producción. El SSFSSR captura esta relación a través del Primary Product Conversion Rate (PPCR) — un coeficiente desarrollado como parte de este marco metodológico. Reducir el PPCR, es decir, producir los productos secundarios de forma más eficiente, mejora la tasa de autosuficiencia alimentaria de un país sin necesidad de ampliar la producción primaria.</p>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">Consulte los datos de su país</p>
+      <a class="pb-cta" href="https://ssfssr-app.github.io/ssfssr-app/" target="_blank">
+        <span class="pb-cta-icon">🌐</span>
+        <div class="pb-cta-text"><p class="pb-cta-label">Base de datos interactiva gratuita</p><p class="pb-cta-url">ssfssr-app.github.io/ssfssr-app</p></div>
+        <span class="pb-arrow">→</span>
+      </a>
+      <p class="pb-links">Metodología &amp; datos: <a class="pb-link" href="https://doi.org/10.5281/zenodo.18897195" target="_blank">doi.org/10.5281/zenodo.18897195</a> &nbsp;·&nbsp; Artículo revisado por pares: <a class="pb-link" href="https://doi.org/10.1186/s40066-025-00570-z" target="_blank">Agriculture &amp; Food Security (Springer, 2026)</a></p>
+    </div>
+    <div class="pb-footer">
+      <span class="pb-cred">🏛 Goro Takahashi, Universidad Aichi, Japón &nbsp;<a href="https://orcid.org/0000-0002-4422-6293" target="_blank" style="color:#1D9E75; font-size:11px;">ORCID 0000-0002-4422-6293</a></span>
+      <span class="pb-cred">✓ <a href="https://knowledge4policy.ec.europa.eu/publication/new-method-calculating-food-self-sufficiency-ratio-supply-side-food-self-sufficiency_en" target="_blank" style="color:#888780;">Indexado en EU Knowledge4Policy (K4P)</a></span>
+      <span class="pb-cred">🔓 CC BY 4.0 · Libre uso con atribución</span>
+    </div>
+  </div>
+
+  <!-- CHINESE -->
+  <div class="brief" id="brief-zh">
+    <div class="pb-header">
+      <p class="pb-kicker">政策简报 · 粮食安全测量</p>
+      <h2 class="pb-title">衡量国家粮食自给水平的新方法</h2>
+      <p class="pb-subtitle">供给侧粮食自给率（SSFSSR）——开放数据，免费获取</p>
+    </div>
+    <div class="pb-metrics">
+      <div class="pb-metric"><span class="pb-metric-num">188</span><span class="pb-metric-label">覆盖国家数</span></div>
+      <div class="pb-metric"><span class="pb-metric-num">64</span><span class="pb-metric-label">食品品类数</span></div>
+      <div class="pb-metric"><span class="pb-metric-num">2010–23</span><span class="pb-metric-label">时间序列</span></div>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">传统测量方法的局限</p>
+      <p class="pb-body">传统粮食自给率（CFSSR）几乎仅聚焦于谷物，忽视了畜产品、食用油、乳制品、糖、水产品及其他数十种构成现代饮食的食物——导致国际比较失真，政策决策缺乏可靠依据。</p>
+      <div class="pb-compare">
+        <div class="pb-compare-box pb-box-old"><div class="pb-box-label">CFSSR — 传统方法</div>仅覆盖谷物 · 忽略二次产品 · 国家覆盖有限 · 缺乏统一标准 · 以重量为单位汇总</div>
+        <div class="pb-compare-box pb-box-new"><div class="pb-box-label">SSFSSR — 新方法</div>64种食品品类 · 初级与二次产品并重 · 188个国家 · 统一FAOSTAT基础 · 以千卡为单位计算</div>
+      </div>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">SSFSSR的创新之处</p>
+      <p class="pb-body">SSFSSR在汇总前将所有食品品类换算为千卡热量。肉类、乳制品、食用油等二次产品进一步通过初级产品转换率（Primary Product Conversion Rate，PPCR）折算为初级产品当量，从而消除重复计算，在统一热量基础上完整呈现食物供应链。所有计算均使用FAOSTAT公开数据，结果完全可复现。<br><br>核心发现：肉类、乳制品、食用油等每一种二次产品的生产均需消耗大量初级农产品。SSFSSR通过本研究框架中独创的初级产品转换率（PPCR）系数捕捉这一关系。降低PPCR，即提高二次产品的生产效率，可在不扩大初级生产规模的前提下提升一国的粮食自给率。</p>
+    </div>
+    <div class="pb-section">
+      <p class="pb-section-title">立即查询您所在国家的数据</p>
+      <a class="pb-cta" href="https://ssfssr-app.github.io/ssfssr-app/" target="_blank">
+        <span class="pb-cta-icon">🌐</span>
+        <div class="pb-cta-text"><p class="pb-cta-label">免费交互式数据库</p><p class="pb-cta-url">ssfssr-app.github.io/ssfssr-app</p></div>
+        <span class="pb-arrow">→</span>
+      </a>
+      <p class="pb-links">完整方法论、数据文件及PPCR系数：<a class="pb-link" href="https://doi.org/10.5281/zenodo.18897195" target="_blank">doi.org/10.5281/zenodo.18897195</a> &nbsp;·&nbsp; 同行评审论文：<a class="pb-link" href="https://doi.org/10.1186/s40066-025-00570-z" target="_blank">Agriculture &amp; Food Security（Springer，2026）</a></p>
+    </div>
+    <div class="pb-footer">
+      <span class="pb-cred">🏛 高桥五郎，爱知大学，日本 &nbsp;<a href="https://orcid.org/0000-0002-4422-6293" target="_blank" style="color:#1D9E75; font-size:11px;">ORCID 0000-0002-4422-6293</a></span>
+      <span class="pb-cred">✓ <a href="https://knowledge4policy.ec.europa.eu/publication/new-method-calculating-food-self-sufficiency-ratio-supply-side-food-self-sufficiency_en" target="_blank" style="color:#888780;">已收录于欧盟 Knowledge4Policy（K4P）</a></span>
+      <span class="pb-cred">🔓 CC BY 4.0 · 注明出处即可免费使用</span>
+    </div>
+  </div>
+
+</div>
+<script>
+function switchLang(lang, btn) {
+  document.querySelectorAll('.brief').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('brief-' + lang).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
